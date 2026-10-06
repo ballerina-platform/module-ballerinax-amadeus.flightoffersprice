@@ -5,40 +5,15 @@ import ballerinax/amadeus.flightoffersprice as amadeus;
 
 configurable string clientId = ?;
 configurable string clientSecret = ?;
-configurable string origin = ?;
-configurable string destination = ?;
-configurable string departure = ?;
-configurable string arrival = ?;
-configurable string carrierCode = ?;
-configurable string flightNumber = ?;
+// An offer saved, unchanged, from the `data` array of a Flight Offers Search response
+configurable string offerFile = "flight-offer.json";
 
 public function main() returns error? {
     amadeus:Client amadeusClient = check new ({auth: {clientId, clientSecret}});
 
+    amadeus:FlightOffer offer = check (check io:fileReadJson(offerFile)).cloneWithType();
     amadeus:QuoteAirOffersRequest request = {
-        data: {
-            'type: "flight-offers-pricing",
-            flightOffers: [
-                {
-                    'type: "flight-offer",
-                    id: "1",
-                    'source: "GDS",
-                    itineraries: [
-                        {
-                            segments: [
-                                {
-                                    id: "1",
-                                    carrierCode,
-                                    number: flightNumber,
-                                    departure: {iataCode: origin, at: departure},
-                                    arrival: {iataCode: destination, at: arrival}
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+        data: {'type: "flight-offers-pricing", flightOffers: [offer]}
     };
 
     amadeus:QuoteAirOffersResponse base = check amadeusClient->quoteAirOffers(request);

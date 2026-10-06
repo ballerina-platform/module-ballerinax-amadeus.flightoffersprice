@@ -4,22 +4,17 @@ This example prices one flight offer twice with the Flight Offers Price API: onc
 
 ## Prerequisites
 
-1. Create an app in the [Amadeus for Developers](https://developers.amadeus.com/register) portal and copy its API key and API secret.
+1. Create an application in the [Amadeus for Developers](https://developers.amadeus.com/) portal and copy its API key and API secret. They are used as the client ID and client secret.
 
-2. Create a `Config.toml` file in the example directory:
+2. Search for flights with [Flight Offers Search](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search), and save one offer from the `data` array of the response, unchanged, as `flight-offer.json` in the example directory. Offers expire, so search shortly before you run the example.
+
+3. Create a `Config.toml` file in the example directory:
 
     ```toml
     clientId = "<api-key>"
     clientSecret = "<api-secret>"
-    origin = "<origin-iata-code>"
-    destination = "<destination-iata-code>"
-    departure = "<departure-date-time>"
-    arrival = "<arrival-date-time>"
-    carrierCode = "<airline-code>"
-    flightNumber = "<flight-number>"
+    offerFile = "flight-offer.json"
     ```
-
-   Use a real flight from a recent Flight Offers Search response. Date-times use the `YYYY-MM-ddThh:mm:ss` format.
 
 ## Run the example
 

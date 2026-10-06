@@ -34,6 +34,11 @@ These changes are done in order to improve the overall usability, and as workaro
 - **Updated**: Common prefix removed from endpoints as it is now in the base URL.
 - **Reason**: Simplifies API paths and avoids duplication.
 
+6. Simplify the API description
+- **Original**: `info.description` pointed to the Amadeus Authorization Guide and described the limits of the test environment.
+- **Updated**: Replaced it with a one-line summary of what the API does.
+- **Reason**: The description becomes the `Client` class documentation, and a summary of the API reads better there than setup notes do.
+
 ## OpenAPI cli command
 
 The following command was used to generate the Ballerina client from the OpenAPI specification. The command should be executed from the repository root directory.

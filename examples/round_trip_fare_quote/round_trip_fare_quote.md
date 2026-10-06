@@ -1,28 +1,20 @@
 # Round trip fare quote
 
-This example confirms the price of a round-trip flight offer. It sends an outbound and a return itinerary to the Flight Offers Price API with a single `quoteAirOffers` call, then prints the confirmed grand total of each offer and the fare for every traveler.
+This example confirms the price of a round-trip flight offer. It sends an offer from Flight Offers Search, with its outbound and return itineraries, to the Flight Offers Price API in a single `quoteAirOffers` call, then prints the confirmed grand total of each offer and the fare for every traveler.
 
 ## Prerequisites
 
-1. Create an app in the [Amadeus for Developers](https://developers.amadeus.com/register) portal and copy its API key and API secret.
+1. Create an application in the [Amadeus for Developers](https://developers.amadeus.com/) portal and copy its API key and API secret. They are used as the client ID and client secret.
 
-2. Create a `Config.toml` file in the example directory:
+2. Search for a round trip with [Flight Offers Search](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search) (set `returnDate`), and save one offer from the `data` array of the response, unchanged, as `flight-offer.json` in the example directory. Offers expire, so search shortly before you run the example.
+
+3. Create a `Config.toml` file in the example directory:
 
     ```toml
     clientId = "<api-key>"
     clientSecret = "<api-secret>"
-    origin = "<origin-iata-code>"
-    destination = "<destination-iata-code>"
-    outboundDeparture = "<outbound-departure-date-time>"
-    outboundArrival = "<outbound-arrival-date-time>"
-    returnDeparture = "<return-departure-date-time>"
-    returnArrival = "<return-arrival-date-time>"
-    carrierCode = "<airline-code>"
-    outboundFlightNumber = "<outbound-flight-number>"
-    returnFlightNumber = "<return-flight-number>"
+    offerFile = "flight-offer.json"
     ```
-
-   Use real flights from a recent Flight Offers Search response. Date-times use the `YYYY-MM-ddThh:mm:ss` format.
 
 ## Run the example
 

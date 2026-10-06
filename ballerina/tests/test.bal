@@ -18,6 +18,7 @@
 import ballerina/http;
 import ballerina/os;
 import ballerina/test;
+import ballerina/time;
 
 final boolean isLiveServer = os:getEnv("IS_LIVE_SERVER") == "true";
 final string serviceUrl = isLiveServer ? "https://test.api.amadeus.com/v1/shopping/flight-offers" : "http://localhost:9090/pricing";
@@ -63,16 +64,34 @@ final FlightOfferPricingIn pricingInput = {
     ]
 };
 
+// The live API prices only offers returned, unchanged, by Flight Offers Search, so the live tests search for
+// one a month ahead. The mock tests use the hand-built pricingInput above.
+function pricingRequest() returns QuoteAirOffersRequest|error {
+    if !isLiveServer {
+        return {data: pricingInput};
+    }
+    http:OAuth2ClientCredentialsGrantConfig searchAuth = {tokenUrl, clientId, clientSecret};
+    http:Client search = check new ("https://test.api.amadeus.com/v2/shopping", {auth: searchAuth});
+    time:Civil date = time:utcToCivil(time:utcAddSeconds(time:utcNow(), 30 * 24 * 60 * 60));
+    string departureDate = string `${date.year}-${date.month < 10 ? "0" : ""}${date.month}-${date.day < 10 ? "0" : ""}${date.day}`;
+    record {FlightOffer[] data;} result = check search->get(
+        string `/flight-offers?originLocationCode=SYD&destinationLocationCode=BKK&departureDate=${departureDate}&adults=1&max=1`);
+    if result.data.length() == 0 {
+        return error("Flight Offers Search returned no offers for " + departureDate);
+    }
+    return {data: {'type: "flight-offers-pricing", flightOffers: [result.data[0]]}};
+}
+
 @test:Config {groups: ["live_tests", "mock_tests"]}
 function testQuoteAirOffers() returns error? {
-    QuoteAirOffersResponse response = check amadeus->quoteAirOffers({data: pricingInput});
+    QuoteAirOffersResponse response = check amadeus->quoteAirOffers(check pricingRequest());
     test:assertEquals(response.data.'type, "flight-offers-pricing");
     test:assertTrue(response.data.flightOffers.length() > 0);
 }
 
 @test:Config {groups: ["live_tests", "mock_tests"]}
 function testQuoteAirOffersWithQueries() returns error? {
-    QuoteAirOffersResponse response = check amadeus->quoteAirOffers({data: pricingInput}, {}, {include: ["bags"], forceClass: false});
+    QuoteAirOffersResponse response = check amadeus->quoteAirOffers(check pricingRequest(), {},{include: ["bags"], forceClass: false});
     test:assertTrue(response.data.flightOffers.length() > 0);
 }
 

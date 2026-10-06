@@ -5,63 +5,28 @@ import ballerinax/amadeus.flightoffersprice as amadeus;
 
 configurable string clientId = ?;
 configurable string clientSecret = ?;
-configurable string origin = ?;
-configurable string destination = ?;
-configurable string outboundDeparture = ?;
-configurable string outboundArrival = ?;
-configurable string returnDeparture = ?;
-configurable string returnArrival = ?;
-configurable string carrierCode = ?;
-configurable string outboundFlightNumber = ?;
-configurable string returnFlightNumber = ?;
+// A round-trip offer saved, unchanged, from the `data` array of a Flight Offers Search response
+configurable string offerFile = "flight-offer.json";
 
 public function main() returns error? {
     amadeus:Client amadeusClient = check new ({auth: {clientId, clientSecret}});
 
-    amadeus:Itinerary outbound = {
-        segments: [
-            {
-                id: "1",
-                carrierCode,
-                number: outboundFlightNumber,
-                departure: {iataCode: origin, at: outboundDeparture},
-                arrival: {iataCode: destination, at: outboundArrival}
-            }
-        ]
-    };
-    amadeus:Itinerary inbound = {
-        segments: [
-            {
-                id: "2",
-                carrierCode,
-                number: returnFlightNumber,
-                departure: {iataCode: destination, at: returnDeparture},
-                arrival: {iataCode: origin, at: returnArrival}
-            }
-        ]
-    };
+    amadeus:FlightOffer offer = check (check io:fileReadJson(offerFile)).cloneWithType();
+    if (offer.itineraries ?: []).length() != 2 {
+        return error("The offer in " + offerFile + " is not a round trip");
+    }
 
     amadeus:QuoteAirOffersResponse quote = check amadeusClient->quoteAirOffers({
-        data: {
-            'type: "flight-offers-pricing",
-            flightOffers: [
-                {
-                    'type: "flight-offer",
-                    id: "1",
-                    'source: "GDS",
-                    itineraries: [outbound, inbound]
-                }
-            ]
-        }
+        data: {'type: "flight-offers-pricing", flightOffers: [offer]}
     });
 
-    foreach amadeus:FlightOffer offer in quote.data.flightOffers {
-        amadeus:ExtendedPrice? price = offer.price;
+    foreach amadeus:FlightOffer pricedOffer in quote.data.flightOffers {
+        amadeus:ExtendedPrice? price = pricedOffer.price;
         if price is () {
-            return error("The pricing response for offer " + offer.id + " has no price");
+            return error("The pricing response for offer " + pricedOffer.id + " has no price");
         }
-        io:println("Offer ", offer.id, ": ", price.grandTotal, " ", price.currency);
-        foreach amadeus:TravelerPricing traveler in offer.travelerPricings ?: [] {
+        io:println("Offer ", pricedOffer.id, ": ", price.grandTotal, " ", price.currency);
+        foreach amadeus:TravelerPricing traveler in pricedOffer.travelerPricings ?: [] {
             io:println("  Traveler ", traveler.travelerId, " (", traveler.travelerType, "): ", traveler.price?.total);
         }
     }
