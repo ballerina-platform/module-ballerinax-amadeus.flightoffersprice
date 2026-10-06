@@ -37,6 +37,19 @@
   "produces": [
     "application/vnd.amadeus+json"
   ],
+  "securityDefinitions": {
+    "oauth2": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://test.api.amadeus.com/v1/security/oauth2/token",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth2": []
+    }
+  ],
   "paths": {
     "/shopping/flight-offers/pricing": {
       "post": {
@@ -2022,7 +2035,7 @@
     "returnQuotation": {
       "description": "Successful Operation",
       "schema": {
-        "title": "Success_Pricing",
+        "title": "QuoteAirOffersResponse",
         "type": "object",
         "required": [
           "data"
@@ -2038,27 +2051,32 @@
             "$ref": "#/definitions/FlightOfferPricingOut"
           },
           "included": {
-            "title": "included resources map",
+            "title": "PricingIncludedResources",
+            "type": "object",
             "properties": {
               "credit-card-fees": {
+                "type": "object",
                 "description": "Map of fee applied by credit card brand",
                 "additionalProperties": {
                   "$ref": "#/definitions/CreditCardFee"
                 }
               },
               "bags": {
+                "type": "object",
                 "description": "Map of fee applied by bag option",
                 "additionalProperties": {
                   "$ref": "#/definitions/Bags"
                 }
               },
               "other-services": {
+                "type": "object",
                 "description": "Map of fee applied by service",
                 "additionalProperties": {
                   "$ref": "#/definitions/OtherServices"
                 }
               },
               "detailed-fare-rules": {
+                "type": "object",
                 "description": "Map of fare rules applied by farebasis",
                 "additionalProperties": {
                   "$ref": "#/definitions/DetailedFareRules"
