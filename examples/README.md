@@ -2,13 +2,20 @@
 
 The `ballerinax/amadeus.flightoffersprice` connector provides practical examples illustrating usage in various scenarios.
 
-[//]: # (TODO: Add examples)
-1. 
-2. 
+1. **[Round trip fare quote](https://github.com/ballerina-platform/module-ballerinax-amadeus.flightoffersprice/tree/main/examples/round_trip_fare_quote)** - Confirm the price of a round-trip flight offer and print the fare per offer and traveler.
+
+2. **[Baggage cost comparison](https://github.com/ballerina-platform/module-ballerinax-amadeus.flightoffersprice/tree/main/examples/baggage_cost_comparison)** - Price one flight offer with and without extra bag options and compare the cost of checked baggage.
 
 ## Prerequisites
 
-[//]: # (TODO: Add prerequisites)
+1. Get an API key and API secret for the Amadeus Flight Offers Price API as described in the [Setup guide](https://github.com/ballerina-platform/module-ballerinax-amadeus.flightoffersprice/blob/main/ballerina/README.md#setup-guide).
+
+2. For each example, create a `Config.toml` file with the related configuration, as described in the example's own document. Every example needs the credentials:
+
+    ```toml
+    clientId = "<api-key>"
+    clientSecret = "<api-secret>"
+    ```
 
 ## Running an example
 
