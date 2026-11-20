@@ -1,6 +1,6 @@
 ## Overview
 
-[Amadeus](https://amadeus.com/) is a global travel technology company, and its [Flight Offers Price](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-price) API confirms the final price and availability of flight offers returned by a flight search, including taxes, fees and optional extras. The Amadeus Flight Offers Price connector lets Ballerina applications submit flight offers for pricing and read back the confirmed fares, booking requirements and additional service options.
+[Amadeus](https://amadeus.com/) is a global travel technology company, and its [Flight Offers Price](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-price) API confirms the final price and availability of flight offers returned by a flight search. The connector lets applications price flight offers and read back the confirmed fares, booking requirements and additional services.
 
 This connector supports version 1.3.0 of the Flight Offers Price API.
 
